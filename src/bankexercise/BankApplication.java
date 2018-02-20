@@ -221,21 +221,27 @@ public class BankApplication extends JFrame {
 			}
 		});
 	
+	
 		ActionListener first = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				if(!isAccountListEmpty())
+				{
 				saveOpenValues();
-				
+		
 				currentItem=0;
 				while(!table.containsKey(currentItem)){
 					currentItem++;
 				}
+				
 				displayDetails(currentItem);
+				}
 			}
 		};
 		
 		ActionListener next = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(!isAccountListEmpty())
+				{
 				saveOpenValues();
 				// No next if at end of list.
 				if (currentItem != (table.size()-1)) {
@@ -245,12 +251,16 @@ public class BankApplication extends JFrame {
 						currentItem++;
 					}
 					displayDetails(currentItem);			
-				}				
+				}
+				
+			}
 			}
 		};
 		
 		ActionListener next1 = new ActionListener(){
 			public void actionPerformed(ActionEvent e){
+				if(!isAccountListEmpty())
+				{
 				
 				ArrayList<Integer> keyList = new ArrayList<Integer>();
 				int i=0;
@@ -273,13 +283,15 @@ public class BankApplication extends JFrame {
 					}
 					displayDetails(currentItem);			
 			}
+			}
 		};
 		
 		
 
 		ActionListener prev = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				if(!isAccountListEmpty())
+				{
 				ArrayList<Integer> keyList = new ArrayList<Integer>();
 				int i=0;
 		
@@ -301,10 +313,13 @@ public class BankApplication extends JFrame {
 				}
 				displayDetails(currentItem);				
 			}
+			}
 		};
 	
 		ActionListener last = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(!isAccountListEmpty())
+				{
 				saveOpenValues();
 				
 				currentItem =29;
@@ -315,6 +330,7 @@ public class BankApplication extends JFrame {
 				}
 				
 				displayDetails(currentItem);
+			}
 			}
 		};
 		
@@ -766,6 +782,13 @@ public static void saveToFile(){
     	  
 	      
 	}
+
+public boolean isAccountListEmpty() {
+	if(accountList.isEmpty())
+		return true;
+	else
+		return false;
+}
 
 	public static void writeFile(){
 		openFileWrite();
