@@ -210,6 +210,8 @@ public class BankApplication extends JFrame {
 	
 		setOverdraft.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
+				if(!isAccountListEmpty())
+				{
 				if(table.get(currentItem).getAccountType().trim().equals("Current")){
 					String newOverdraftStr = JOptionPane.showInputDialog(null, "Enter new Overdraft", JOptionPane.OK_CANCEL_OPTION);
 					overdraftTextField.setText(newOverdraftStr);
@@ -218,6 +220,8 @@ public class BankApplication extends JFrame {
 				else
 					JOptionPane.showMessageDialog(null, "Overdraft only applies to Current Accounts");
 			
+			}else
+				JOptionPane.showMessageDialog(null, "There is no account to set overdraft to.");
 			}
 		});
 	
@@ -234,30 +238,13 @@ public class BankApplication extends JFrame {
 				}
 				
 				displayDetails(currentItem);
-				}
+				}else
+					JOptionPane.showMessageDialog(null, "There are no bank accounts in the system");
 			}
 		};
+	
 		
-		ActionListener next = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(!isAccountListEmpty())
-				{
-				saveOpenValues();
-				// No next if at end of list.
-				if (currentItem != (table.size()-1)) {
-					// Move to next item.
-						currentItem++;
-					while(!table.containsKey(currentItem) ){
-						currentItem++;
-					}
-					displayDetails(currentItem);			
-				}
-				
-			}
-			}
-		};
-		
-		ActionListener next1 = new ActionListener(){
+		ActionListener next = new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				if(!isAccountListEmpty())
 				{
@@ -282,7 +269,8 @@ public class BankApplication extends JFrame {
 						}
 					}
 					displayDetails(currentItem);			
-			}
+			}else
+				JOptionPane.showMessageDialog(null, "There are no bank accounts in the system");
 			}
 		};
 		
@@ -312,7 +300,8 @@ public class BankApplication extends JFrame {
 					}
 				}
 				displayDetails(currentItem);				
-			}
+			}else
+				JOptionPane.showMessageDialog(null, "There are no bank accounts in the system");
 			}
 		};
 	
@@ -330,12 +319,13 @@ public class BankApplication extends JFrame {
 				}
 				
 				displayDetails(currentItem);
-			}
+			}else
+				JOptionPane.showMessageDialog(null, "There are no bank accounts in the system");
 			}
 		};
 		
-		nextItemButton.addActionListener(next1);
-		nextItem.addActionListener(next1);
+		nextItemButton.addActionListener(next);
+		nextItem.addActionListener(next);
 		
 		prevItemButton.addActionListener(prev);
 		prevItem.addActionListener(prev);
@@ -348,7 +338,8 @@ public class BankApplication extends JFrame {
 		
 		deleteItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-						
+				if(!isAccountListEmpty())
+				{
 							table.remove(currentItem);
 							JOptionPane.showMessageDialog(null, "Account Deleted");
 							
@@ -359,6 +350,10 @@ public class BankApplication extends JFrame {
 							}
 							displayDetails(currentItem);
 							
+			}
+				else
+					JOptionPane.showMessageDialog(null, "There is no account to delete");
+					
 			}
 		});
 		
@@ -371,20 +366,28 @@ public class BankApplication extends JFrame {
 		
 		modifyItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
+				if(!isAccountListEmpty())
+				{
 				surnameTextField.setEditable(true);
 				firstNameTextField.setEditable(true);
 				
 				openValues = true;
+			}else
+				JOptionPane.showMessageDialog(null, "There is no account to modify");
 			}
+			
 		});
 		
 		setInterest.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				
+				if(!isAccountListEmpty())
+				{
 				 String interestRateStr = JOptionPane.showInputDialog("Enter Interest Rate: (do not type the % sign)");
 				 if(interestRateStr!=null)
 					 interestRate = Double.parseDouble(interestRateStr);
 			
+			}else
+				JOptionPane.showMessageDialog(null, "There is no account to add interest too");
 			}
 		});
 		
@@ -470,13 +473,8 @@ public class BankApplication extends JFrame {
 					   
 					 if(sName.equalsIgnoreCase((entry.getValue().getSurname().trim()))){
 						 found = true;
-						 accountIDTextField.setText(entry.getValue().getAccountID()+"");
-						 accountNumberTextField.setText(entry.getValue().getAccountNumber());
-						 surnameTextField.setText(entry.getValue().getSurname());
-						 firstNameTextField.setText(entry.getValue().getFirstName());
-						 accountTypeTextField.setText(entry.getValue().getAccountType());
-						 balanceTextField.setText(entry.getValue().getBalance()+"");
-						 overdraftTextField.setText(entry.getValue().getOverdraft()+"");
+						 displayDetails(entry.getKey());
+
 					 }
 				 }		
 				 if(found)
@@ -496,13 +494,7 @@ public class BankApplication extends JFrame {
 					   
 					 if(accNum.equals(entry.getValue().getAccountNumber().trim())){
 						 found = true;
-						 accountIDTextField.setText(entry.getValue().getAccountID()+"");
-						 accountNumberTextField.setText(entry.getValue().getAccountNumber());
-						 surnameTextField.setText(entry.getValue().getSurname());
-						 firstNameTextField.setText(entry.getValue().getFirstName());
-						 accountTypeTextField.setText(entry.getValue().getAccountType());
-						 balanceTextField.setText(entry.getValue().getBalance()+"");
-						 overdraftTextField.setText(entry.getValue().getOverdraft()+"");						
+						displayDetails(entry.getKey());					
 						 
 					 }			 
 				 }
@@ -784,7 +776,7 @@ public static void saveToFile(){
 	}
 
 public boolean isAccountListEmpty() {
-	if(accountList.isEmpty())
+	if(table.isEmpty())
 		return true;
 	else
 		return false;
