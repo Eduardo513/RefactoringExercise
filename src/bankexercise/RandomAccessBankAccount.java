@@ -46,6 +46,18 @@ public class RandomAccessBankAccount extends BankAccount {
 		file.writeDouble(getOverdraft());
 	}
 	
+	public void setRandomAccessBankAccount(RandomAccessBankAccount acc, BankAccount values)
+	{
+		   acc.setAccountID(values.getAccountID());
+		   acc.setAccountNumber(values.getAccountNumber());
+		   acc.setFirstName(values.getFirstName());
+		   acc.setSurname(values.getSurname());
+		   acc.setAccountType(values.getAccountType());
+		   acc.setBalance(values.getBalance());
+		   acc.setOverdraft(values.getOverdraft());
+	
+	}
+	
 	private void writeName(RandomAccessFile file, String name) throws IOException{
 		StringBuffer buffer = null;
 		

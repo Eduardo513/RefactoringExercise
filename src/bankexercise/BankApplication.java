@@ -37,7 +37,7 @@ public class BankApplication extends JFrame {
 	ArrayList<BankAccount> accountList = new ArrayList<BankAccount>();
 	static HashMap<Integer, BankAccount> table = new HashMap<Integer, BankAccount>();
 	private final static int TABLE_SIZE = 29;
-	static private final String newline = "\n";
+	private final static int FIRST_ITEM = 0;
 	
 	JMenuBar menuBar;
 	JMenu navigateMenu, recordsMenu, transactionsMenu, fileMenu, exitMenu;
@@ -61,8 +61,6 @@ public class BankApplication extends JFrame {
 	public BankApplication() {
 		
 		super("Bank Application");
-		
-		int currentItem;
 		initComponents();
 	}
 	
@@ -232,7 +230,7 @@ public class BankApplication extends JFrame {
 				{
 				saveOpenValues();
 		
-				currentItem=0;
+				currentItem=FIRST_ITEM;
 				while(!table.containsKey(currentItem)){
 					currentItem++;
 				}
@@ -250,12 +248,11 @@ public class BankApplication extends JFrame {
 				{
 				
 				ArrayList<Integer> keyList = new ArrayList<Integer>();
-				int i=0;
-		
-				while(i<TABLE_SIZE){
-					i++;
+				
+				for(int i = 0; i <TABLE_SIZE; i++) {
 					if(table.containsKey(i))
 						keyList.add(i);
+				
 				}
 				
 				int maxKey = Collections.max(keyList);
@@ -281,21 +278,18 @@ public class BankApplication extends JFrame {
 				if(!isAccountListEmpty())
 				{
 				ArrayList<Integer> keyList = new ArrayList<Integer>();
-				int i=0;
+				
 		
-				while(i<TABLE_SIZE){
-					i++;
+				for(int i = 0; i <TABLE_SIZE; i++) {
 					if(table.containsKey(i))
 						keyList.add(i);
 				}
 				
 				int minKey = Collections.min(keyList);
-				//System.out.println(minKey);
 				
 				if(currentItem>minKey){
 					currentItem--;
 					while(!table.containsKey(currentItem)){
-						//System.out.println("Current: " + currentItem + ", min key: " + minKey);
 						currentItem--;
 					}
 				}
@@ -311,7 +305,7 @@ public class BankApplication extends JFrame {
 				{
 				saveOpenValues();
 				
-				currentItem =29;
+				currentItem = TABLE_SIZE;
 								
 				while(!table.containsKey(currentItem)){
 					currentItem--;
@@ -344,7 +338,7 @@ public class BankApplication extends JFrame {
 							JOptionPane.showMessageDialog(null, "Account Deleted");
 							
 
-							currentItem=0;
+							currentItem=FIRST_ITEM;
 							while(!table.containsKey(currentItem)){
 								currentItem++;
 							}
@@ -417,7 +411,6 @@ public class BankApplication extends JFrame {
 				}
 				frame.setSize(600,500);
 				frame.add(scrollPane);
-				//frame.pack();
 		        frame.setVisible(true);			
 			}
 		});
@@ -425,7 +418,7 @@ public class BankApplication extends JFrame {
 		open.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				readFile();
-				currentItem=0;
+				currentItem=FIRST_ITEM;
 				while(!table.containsKey(currentItem)){
 					currentItem++;
 				}
@@ -517,7 +510,7 @@ public class BankApplication extends JFrame {
 						String toDeposit = JOptionPane.showInputDialog("Account found, Enter Amount to Deposit: ");
 						entry.getValue().setBalance(entry.getValue().getBalance() + Double.parseDouble(toDeposit));
 						displayDetails(entry.getKey());
-						//balanceTextField.setText(entry.getValue().getBalance()+"");
+					
 					}
 				}
 				if (!found)
@@ -529,14 +522,11 @@ public class BankApplication extends JFrame {
 			public void actionPerformed(ActionEvent e){
 				String accNum = JOptionPane.showInputDialog("Account number to withdraw from: ");
 				String toWithdraw = JOptionPane.showInputDialog("Account found, Enter Amount to Withdraw: ");
-				boolean found;
-				
-				for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
 					
-
+				for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
+				
 					if(accNum.equals(entry.getValue().getAccountNumber().trim())){
 						
-						found = true;
 						
 						if(entry.getValue().getAccountType().trim().equals("Current")){
 							if(Double.parseDouble(toWithdraw) > entry.getValue().getBalance() + entry.getValue().getOverdraft())
@@ -565,7 +555,6 @@ public class BankApplication extends JFrame {
 					if(entry.getValue().getAccountType().equals("Deposit")){
 						double equation = 1 + ((interestRate)/100);
 						entry.getValue().setBalance(entry.getValue().getBalance()*equation);
-						//System.out.println(equation);
 						JOptionPane.showMessageDialog(null, "Balances Updated");
 						displayDetails(entry.getKey());
 					}
@@ -601,9 +590,6 @@ public class BankApplication extends JFrame {
 	
 	private static RandomAccessFile input;
 	private static RandomAccessFile output;
-	private static final int NUMBER_RECORDS = 100;
-
-	
 	public static void openFileRead()
 	   {
 		
@@ -673,7 +659,6 @@ public class BankApplication extends JFrame {
 	        	 else
 	        		 output = new RandomAccessFile(fc.getSelectedFile(), "rw" );
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	      
@@ -745,22 +730,9 @@ public class BankApplication extends JFrame {
 	   }
 	
 public static void saveToFile(){
-		
-	
 		RandomAccessBankAccount record = new RandomAccessBankAccount();
-	
-	      Scanner input = new Scanner( System.in );
-
-	      
-	      for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
-			   record.setAccountID(entry.getValue().getAccountID());
-			   record.setAccountNumber(entry.getValue().getAccountNumber());
-			   record.setFirstName(entry.getValue().getFirstName());
-			   record.setSurname(entry.getValue().getSurname());
-			   record.setAccountType(entry.getValue().getAccountType());
-			   record.setBalance(entry.getValue().getBalance());
-			   record.setOverdraft(entry.getValue().getOverdraft());
-			   
+	 for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
+	    	  record.setRandomAccessBankAccount(record, entry.getValue());
 			   if(output!=null){
 			   
 			      try {
@@ -785,7 +757,6 @@ public boolean isAccountListEmpty() {
 	public static void writeFile(){
 		openFileWrite();
 		saveToFile();
-		//addRecords();
 		closeFile();
 	}
 	
